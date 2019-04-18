@@ -1,27 +1,15 @@
-const uuid = require("uuid/v4");
+const { API_TOKEN } = require("./config");
+const logger = require("./logger");
 
-const bookmarks = [
-  {
-    id: uuid(),
-    title: "Thinkful",
-    url: "https://www.thinkful.com",
-    description: "Think outside the classroom",
-    rating: 5
-  },
-  {
-    id: uuid(),
-    title: "Google",
-    url: "https://www.google.com",
-    description: "Where we find everything else",
-    rating: 4
-  },
-  {
-    id: uuid(),
-    title: "MDN",
-    url: "https://developer.mozilla.org",
-    description: "The only place to find web documentation",
-    rating: 5
+function validateBearerToken(req, res, next) {
+  const authToken = req.get("Authorization");
+  logger.error(`Unauthorized request to path: ${req.path}`);
+
+  if (!authToken || authToken.split(" ")[1] !== API_TOKEN) {
+    return res.status(401).json({ error: "Unauthorized request" });
   }
-];
 
-module.exports = { bookmarks };
+  next();
+}
+
+module.exports = validateBearerToken;
